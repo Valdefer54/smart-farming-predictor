@@ -1,92 +1,92 @@
-# Proyecto Final - Sistema Predictor de Cultivos
+# Final Project — Crop Prediction System
 
-Este repositorio contiene una pequeña aplicación Flask que carga un modelo de ML (Random Forest) para recomendar cultivos según características del suelo y clima.
+This repository contains a small Flask application that loads a machine learning model (Random Forest) to recommend crops based on soil and weather features.
 
-**Estructura**
-- `main.py`: servidor Flask y endpoints.
-- `ui/templates/inteface.html`: interfaz web para introducir datos y ver la recomendación.
-- `model_ml/random_forest_model.joblib`: archivo del modelo entrenado (binario).
-- `model_ml/predict.py`: funciones para cargar el modelo y predecir.
+**Project Structure**
+- `main.py`: Flask server and API endpoints.
+- `ui/templates/inteface.html`: web interface to enter data and view recommendations.
+- `model_ml/random_forest_model.joblib`: the trained model file (binary).
+- `model_ml/predict.py`: helper functions to load the model and predict.
 
-**Requisitos**
-- Python 3.10+ (o la versión que uses en tu entorno virtual)
+**Requirements**
+- Python 3.10+ (or the Python version you use in your virtual environment)
 - pip
 
-Se recomiendan las siguientes dependencias (si no tienes `requirements.txt`):
+Recommended dependencies (if you don't have a `requirements.txt`):
 - `Flask`
 - `joblib`
 - `pandas`
-- `scikit-learn` (solo si vas a reentrenar o inspeccionar el modelo)
+- `scikit-learn` (only if you plan to retrain or inspect the model)
 
-**Instrucciones (Windows / PowerShell)**
+**Instructions (Windows / PowerShell)**
 
-1) Abrir PowerShell en la carpeta del proyecto (ejemplo):
+1) Open PowerShell in the project folder (example):
 
 ```powershell
 cd "C:\Users\Usuario\Desktop\Proyecto Final Programación III"
 ```
 
-2) Crear y activar un entorno virtual (recomendado):
+2) Create and activate a virtual environment (recommended):
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-3) Instalar dependencias (si tienes `requirements.txt`):
+3) Install dependencies (if you have a `requirements.txt`):
 
 ```powershell
 pip install -r requirements.txt
 ```
 
-Si no tienes `requirements.txt`, instala las dependencias principales:
+If you don't have a `requirements.txt`, install the core dependencies:
 
 ```powershell
 pip install flask joblib pandas scikit-learn
 ```
 
-4) Ejecutar la aplicación:
+4) Run the application:
 
 ```powershell
 python .\main.py
-# Abrir la interfaz en el navegador
+# Open the interface in your browser
 Start-Process http://127.0.0.1:5000
 ```
 
-5) Probar el endpoint desde la interfaz: llena el formulario y presiona `ANALIZAR SUELO`. El HTML hace POST a `/predecir` y espera `status: 'success'` en la respuesta JSON.
+5) Test the endpoint from the web interface: fill the form and press `ANALYZE SOIL`. The HTML posts to `/predecir` and expects a JSON response containing `status: 'success'`.
 
-**Subir el repositorio a GitHub**
+**Push the repository to GitHub**
 
-A continuación tienes pasos mínimos para crear el repositorio remoto y subir tu código (PowerShell):
+Minimal steps to create a remote repository and push your code (PowerShell):
 
-1. Inicializar git, añadir archivos y hacer commit:
+1. Initialize git, add files and commit:
 
 ```powershell
 git init
 git add .
-git commit -m "Inicial: proyecto predictor de cultivos"
+git commit -m "Initial: crop predictor project"
 ```
 
-2. Crear repositorio en GitHub (opciones):
-- Opción A (interfaz web): crea un nuevo repositorio en https://github.com/new y copia la URL remota.
-- Opción B (gh CLI, si la tienes):
+2. Create a repository on GitHub (options):
+- Option A (web): create a new repository at https://github.com/new and copy the remote URL.
+- Option B (gh CLI, if you have it):
 
 ```powershell
-gh repo create NOMBRE_REPO --public --source . --remote origin --push
+gh repo create REPO_NAME --public --source . --remote origin --push
 ```
 
-3. Si creaste el repo en la web, añade el remoto y sube:
+3. If you created the repo on the web, add the remote and push:
 
 ```powershell
-# Reemplaza <URL_REMOTO> por la URL que te dio GitHub (HTTPS o SSH)
-git remote add origin <URL_REMOTO>
+# Replace <REMOTE_URL> with the URL GitHub gives you (HTTPS or SSH)
+git remote add origin <REMOTE_URL>
 git branch -M main
 git push -u origin main
 ```
 
-**Recomendaciones importantes antes de subir**
-- Evita subir archivos binarios grandes (como el archivo del modelo) si no quieres que el repositorio crezca demasiado. Considera usar `git-lfs` para `random_forest_model.joblib`.
-- Crear un archivo `.gitignore` con al menos:
+**Important recommendations before pushing**
+- Avoid committing large binary files (for example, the trained model) if you don't want the repository to grow too large. Consider using `git-lfs` for `random_forest_model.joblib`.
+- Create a `.gitignore` file that at minimum contains:
 
 ```
 .venv/
@@ -96,10 +96,10 @@ model_ml/*.joblib
 .env
 ```
 
-Comandos para agregar `.gitignore` y commitear:
+Commands to create `.gitignore` and commit it:
 
 ```powershell
-# Crear .gitignore (puedes editarlo luego)
+# Create .gitignore (you can edit it later)
 @"
 .venv/
 __pycache__/
@@ -109,27 +109,18 @@ model_ml/*.joblib
 "@ > .gitignore
 
 git add .gitignore
-git commit -m "Añadir .gitignore"
+git commit -m "Add .gitignore"
 ```
 
-**Notas adicionales**
-- Si el modelo `random_forest_model.joblib` está fuera del control de versiones, guarda una copia fuera del repo o usa Git LFS. Para instalar y usar Git LFS:
+**Additional notes**
+- If `model_ml/random_forest_model.joblib` should be tracked but is large, use Git LFS instead of normal git. Example workflow:
 
-```powershell
-choco install git-lfs    # si usas Chocolatey
-git lfs install
-git lfs track "model_ml/*.joblib"
-git add .gitattributes
-git add model_ml/random_forest_model.joblib
-git commit -m "Añadir modelo con LFS"
-git push origin main
-```
 
-- Si la ruta a las plantillas cambia, Flask tiene el argumento `template_folder` en `Flask(__name__, template_folder='ui/templates')` (ya configurado en `main.py`).
+- If you ever move the templates folder, Flask supports specifying the templates directory with `template_folder`, e.g. `Flask(__name__, template_folder='ui/templates')` (already configured in `main.py`).
 
-Si quieres, puedo:
-- Generar `requirements.txt` automáticamente con las dependencias detectadas.
-- Añadir un archivo `.gitattributes` y configurar Git LFS por ti.
-- Crear el repo en GitHub si me das el nombre (usa `gh` CLI o dame permiso para ejecutar comandos localmente).
+If you want, I can also:
+- Generate a `requirements.txt` automatically from the environment.
+- Add a `.gitattributes` file and set up Git LFS for you.
+- Create the GitHub repository using the `gh` CLI if you give me the desired repository name.
 
-¡Listo! README creado con los pasos básicos para configurar y subir tu proyecto a GitHub.
+README translated and updated. If you'd like, I can also create `requirements.txt` and a `.gitignore` file now.
