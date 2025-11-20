@@ -1,126 +1,145 @@
-# Final Project — Crop Prediction System
+# Crop Recommendation System
 
-This repository contains a small Flask application that loads a machine learning model (Random Forest) to recommend crops based on soil and weather features.
+A simple web application built with Flask that uses a pre-trained Random Forest machine learning model to recommend the best crop to grow based on soil and environmental features.
 
-**Project Structure**
-- `main.py`: Flask server and API endpoints.
-- `ui/templates/inteface.html`: web interface to enter data and view recommendations.
-- `model_ml/random_forest_model.joblib`: the trained model file (binary).
-- `model_ml/predict.py`: helper functions to load the model and predict.
+## Features
 
-**Requirements**
-- Python 3.10+ (or the Python version you use in your virtual environment)
-- pip
+-   **Web Interface:** An easy-to-use interface to input soil and weather data.
+-   **ML-Powered Predictions:** Utilizes a `scikit-learn` Random Forest model to provide crop recommendations.
+-   **REST API:** A simple `/predecir` endpoint for predictions.
 
-Recommended dependencies (if you don't have a `requirements.txt`):
-- `Flask`
-- `joblib`
-- `pandas`
-- `scikit-learn` (only if you plan to retrain or inspect the model)
+## Project Structure
 
-**Instructions (Windows / PowerShell)**
-
-1) Open PowerShell in the project folder (example):
-
-```powershell
-cd "C:\Users\Usuario\Desktop\Proyecto Final Programación III"
+```
+.
+├───main.py                     # Main Flask application file
+├───requirements.txt            # Project dependencies
+├───model_ml/
+│   ├───predict.py              # Handles loading the model and making predictions
+│   └───random_forest_model.joblib  # The pre-trained machine learning model
+└───ui/
+    └───templates/
+        └───interface.html      # Frontend HTML
 ```
 
-2) Create and activate a virtual environment (recommended):
+## Setup and Installation
+
+Follow these steps to get the application running on your local machine.
+
+### 1. Prerequisites
+
+-   Python 3.8+
+-   `pip` package manager
+
+### 2. Clone the Repository (Optional)
+
+If you have `git` installed, you can clone the repository:
+
+```bash
+git clone <your-repository-url>
+cd <repository-folder>
+```
+
+### 3. Create and Activate a Virtual Environment
+
+It is highly recommended to use a virtual environment to manage project dependencies.
+
+**On Windows:**
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-3) Install dependencies (if you have a `requirements.txt`):
+**On macOS/Linux:**
 
-```powershell
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 4. Install Dependencies
+
+Install all the required packages using the `requirements.txt` file:
+
+```bash
 pip install -r requirements.txt
 ```
 
-If you don't have a `requirements.txt`, install the core dependencies:
+## Usage
 
-```powershell
-pip install flask joblib pandas scikit-learn
-```
+1.  **Run the Flask Application:**
 
-4) Run the application:
+    ```bash
+    python main.py
+    ```
 
-```powershell
-python .\main.py
-# Open the interface in your browser
-Start-Process http://127.0.0.1:5000
-```
+2.  **Open the Web Interface:**
 
-5) Test the endpoint from the web interface: fill the form and press `ANALYZE SOIL`. The HTML posts to `/predecir` and expects a JSON response containing `status: 'success'`.
+    The application will automatically open a new tab in your web browser at `http://127.0.0.1:5000`. If it doesn't, you can manually navigate to that URL.
 
-**Push the repository to GitHub**
+3.  **Get a Prediction:**
 
-Minimal steps to create a remote repository and push your code (PowerShell):
+    -   Fill in the values for the following features in the web form:
+        -   **N:** Nitrogen content in the soil
+        -   **P:** Phosphorus content in the soil
+        -   **K:** Potassium content in the soil
+        -   **Temperature:** Temperature in Celsius
+        -   **Humidity:** Relative humidity in %
+        -   **pH:** pH value of the soil
+        -   **Rainfall:** Rainfall in mm
+    -   Click the **"ANALYZE SOIL"** button to see the recommended crop.
 
-1. Initialize git, add files and commit:
+## API Endpoint
 
-```powershell
-git init
-git add .
-git commit -m "Initial: crop predictor project"
-```
+The application exposes a single API endpoint for predictions.
 
-2. Create a repository on GitHub (options):
-- Option A (web): create a new repository at https://github.com/new and copy the remote URL.
-- Option B (gh CLI, if you have it):
+### `POST /predecir`
 
-```powershell
-gh repo create REPO_NAME --public --source . --remote origin --push
-```
+This endpoint receives the 7 features as a JSON object and returns the predicted crop.
 
-3. If you created the repo on the web, add the remote and push:
+-   **Request Body:**
 
-```powershell
-# Replace <REMOTE_URL> with the URL GitHub gives you (HTTPS or SSH)
-git remote add origin <REMOTE_URL>
-git branch -M main
-git push -u origin main
-```
+    ```json
+    {
+        "N": "90",
+        "P": "42",
+        "K": "43",
+        "temperature": "20.87",
+        "humidity": "82.0",
+        "ph": "6.5",
+        "rainfall": "202.9"
+    }
+    ```
 
-**Important recommendations before pushing**
-- Avoid committing large binary files (for example, the trained model) if you don't want the repository to grow too large. Consider using `git-lfs` for `random_forest_model.joblib`.
-- Create a `.gitignore` file that at minimum contains:
+-   **Success Response (200 OK):**
 
-```
-.venv/
-__pycache__/
-*.pyc
-model_ml/*.joblib
-.env
-```
+    ```json
+    {
+        "status": "success",
+        "resultado": "rice"
+    }
+    ```
 
-Commands to create `.gitignore` and commit it:
+-   **Error Response (400/500):**
 
-```powershell
-# Create .gitignore (you can edit it later)
-@"
-.venv/
-__pycache__/
-*.pyc
-model_ml/*.joblib
-.env
-"@ > .gitignore
+    ```json
+    {
+        "status": "error",
+        "message": "Missing data field in request: 'N'"
+    }
+    ```
 
-git add .gitignore
-git commit -m "Add .gitignore"
-```
+## How It Works
 
-**Additional notes**
-- If `model_ml/random_forest_model.joblib` should be tracked but is large, use Git LFS instead of normal git. Example workflow:
+The application uses a `RandomForestClassifier` model from `scikit-learn` that was trained on a dataset of crop information. The `model_ml/predict.py` script loads this pre-trained model (from `random_forest_model.joblib`) and uses it to infer the most suitable crop based on the input data provided through the API.
 
+## Dataset
 
-- If you ever move the templates folder, Flask supports specifying the templates directory with `template_folder`, e.g. `Flask(__name__, template_folder='ui/templates')` (already configured in `main.py`).
+The model was trained using the **Smart Farming Data 2024 (SF24)** dataset, which is available on Kaggle. This dataset contains various soil and environmental measurements for different crops.
 
-If you want, I can also:
-- Generate a `requirements.txt` automatically from the environment.
-- Add a `.gitattributes` file and set up Git LFS for you.
-- Create the GitHub repository using the `gh` CLI if you give me the desired repository name.
+-   **Dataset Link:** [Smart Farming Data 2024 (SF24) on Kaggle](https://www.kaggle.com/datasets/datasetengineer/smart-farming-data-2024-sf24/code)
 
-README translated and updated. If you'd like, I can also create `requirements.txt` and a `.gitignore` file now.
+## License
+
+This project is unlicensed. You are free to use, modify, and distribute it as you see fit.
